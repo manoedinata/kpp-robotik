@@ -58,7 +58,8 @@ def solve_it_dawg(
             return
 
         # Posisi saat ini
-        state = (node, energy_left, time % 2)
+        minutes = (start_hour * 60 + time) // 60
+        state = (node, energy_left, minutes)
 
         # Jika node sudah dikunjungi
         # dan energi lebih hemat: Skip
@@ -72,9 +73,20 @@ def solve_it_dawg(
         if node in charging_stations:
             heapq.heappush(pq, (energy_used, time, node, MAX_ENERGY, path))
 
-        # Rest point → bisa tunggu 1 menit
+        # Rest point = Tunggu hingga jam genap
         if node in rest_points:
-            heapq.heappush(pq, (energy_used, time + 1, node, energy_left, path))
+            current_abs_minutes = start_hour * 60 + time
+            current_hour = current_abs_minutes // 60
+
+            if current_hour % 2 == 1:  # kalau masih jam ganjil
+                minutes_to_next_hour = 60 - (current_abs_minutes % 60)
+                new_time = time + minutes_to_next_hour
+            else:
+                # Jika sudah jam genap, tidak perlu rest
+                # new_time = time + 1
+                new_time = time
+
+            heapq.heappush(pq, (energy_used, new_time, node, energy_left, path))
 
         # Explore neighbors
         # (Path finding)
