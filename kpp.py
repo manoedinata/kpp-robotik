@@ -101,6 +101,7 @@ def solve_it_dawg(
                 cost = int(base_cost * 0.8)
 
             if cost <= energy_left:
+                # Add path to PQ
                 heapq.heappush(pq, (
                     energy_used + cost,
                     time + 2,
