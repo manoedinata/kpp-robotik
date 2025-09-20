@@ -10,7 +10,6 @@
 
 MAX_ENERGY = 1000
 SPEED = 100
-MIN_EDGE_TIME = 2
 
 class Graph:
     def __init__(self, n):
@@ -21,20 +20,36 @@ class Graph:
         self.adj.setdefault(v, []).append((u, w, o))
 
 class KPPRobotik:
-    def __init__(self, n):
+    def __init__(self):
+        self.Graph = None
+        self.states = [()]
+
+    def init_graph(self, n):
         self.Graph = Graph(n)
 
     def get_best_routes(self, n, start, target, rest_points, charging_stations, start_hour):
         # states: list of (energy_used, time, node, energy_left, path, timeline)
-        states = [(0, start_hour*60, start, MAX_ENERGY, [start], [0])]
+        # Simpan state pertama
+        self.states = [(0, start_hour*60, start, MAX_ENERGY, [start], [0])]
+
+        # Simpan visited node
         visited = {}
 
-        while states:
-            # pick the state with the smallest energy_used (linear search)
-            idx = min(range(len(states)), key=lambda i: states[i][0])
-            energy_used, time, node, energy_left, path, timeline = states.pop(idx)
+        # Loop terus sampai states terambil semua
+        while self.states:
 
-            # reached target
+            # Linear search: Ambil state dengan energi terendah
+            min_energy = float('inf')
+            idx = -1
+            for i in range(len(self.states)):
+                if self.states[i][0] >= min_energy: continue
+                min_energy = self.states[i][0]
+                idx = i
+
+            # Pop (ambil) dari idx
+            energy_used, time, node, energy_left, path, timeline = self.states.pop(idx)
+
+            # Node sudah sampai target (T)
             if node == target:
                 print("Total energi minimum:", energy_used)
                 print("Jalur:", " -> ".join(path))
@@ -49,31 +64,40 @@ class KPPRobotik:
                 continue
             visited[state_key] = energy_used
 
-            # charging station
+            # Charging station: Refill energy ke maksimum
             if node in charging_stations and energy_left < MAX_ENERGY:
-                states.append((energy_used, time, node, MAX_ENERGY, path, timeline))
+                self.states.append((energy_used, time, node, MAX_ENERGY, path, timeline))
 
-            # rest point (wait until next even hour)
+            # Rest point: Cek waktu & istirahat
+            # Jika jam masih ganjil, istirahat sampai genap
             if node in rest_points:
                 hour = time // 60
                 if hour % 2 == 1:
                     minutes_to_next_hour = 60 - (time % 60)
                     new_time = time + minutes_to_next_hour
-                    states.append((energy_used, new_time, node, energy_left, path, timeline+[new_time]))
+                    self.states.append((energy_used, new_time, node, energy_left, path, timeline+[new_time]))
 
-            # explore neighbors
+            # Jelajah node lain
             for v, w, o in self.Graph.adj.get(node, []):
                 base_cost = w + o
+
+                # Aturan waktu:
+                # Ganjil = * 1.3 || Genap = * 0.8
                 hour = time // 60
                 if hour % 2 == 1:
                     cost = int(base_cost * 1.3)
                 else:
                     cost = int(base_cost * 0.8)
 
+                # Jika biaya energi lebih rendah,
+                # tambah ke states
                 if cost <= energy_left:
-                    travel_time = max(MIN_EDGE_TIME, round(w / SPEED))
+                    # TODO: Jelaskan travel_time
+                    print("W: ", w, " SPEED: ", SPEED)
+                    travel_time = round(w / SPEED)
                     new_time = time + travel_time
-                    states.append((
+
+                    self.states.append((
                         energy_used + cost,
                         new_time,
                         v,
@@ -82,20 +106,23 @@ class KPPRobotik:
                         timeline + [new_time]
                     ))
 
+        # Kondisi ini akan berjalan jika tidak ada states yang
+        # cukup untuk sampai ke target
         print("Robot gagal dalam mencapai tujuan :(")
 
 if __name__ == "__main__":
+    # Initialize program
+    kppObj = KPPRobotik()
+
     # N, M (Jumlah node, jumlah edge)
     n, m = map(int, input().split())
-
-    # Initialize program
-    kppGwe = KPPRobotik(n)
+    kppObj.init_graph(n)
 
     # Add edges to Graph
     for _ in range(m):
         u, v, w, o = input().split()
         w, o = int(w), int(o)
-        kppGwe.Graph.add_edge(u, v, w, o)
+        kppObj.Graph.add_edge(u, v, w, o)
 
     # Input: Start, Target
     S, T = input().split()
@@ -116,4 +143,4 @@ if __name__ == "__main__":
     start_hour = int(input())
 
     # Execute dawg
-    kppGwe.get_best_routes(n, S, T, rest_points, charging_stations, start_hour)
+    kppObj.get_best_routes(n, S, T, rest_points, charging_stations, start_hour)
