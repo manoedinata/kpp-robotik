@@ -9,6 +9,7 @@
 void read_points(std::set<std::string>& points_set) {
     std::string line, point;
     std::getline(std::cin, line);
+
     if (line == "-") return;
 
     std::stringstream ss(line);
@@ -29,14 +30,14 @@ int main() {
     std::cin >> n >> m;
 
     // M baris, berisi graph node & edge
-    for (int i = 0; i < m; ++i) {
+    for (int i = 0; i < m; i++) {
         std::string u, v;
         int w, o;
         std::cin >> u >> v >> w >> o;
         kpp_robot.add_edge(u, v, w, o);
     }
 
-    // S, T
+    // S, T (Start, Target)
     std::string start_node, target_node;
     std::cin >> start_node >> target_node;
     std::cin.ignore();
@@ -60,7 +61,13 @@ int main() {
     std::cin >> start_hour;
 
     // Letsgoo dawgg
-    kpp_robot.get_best_routes(start_node, target_node, rest_points, charging_stations, start_hour);
+    kpp_robot.get_best_routes(
+        start_node,
+        target_node,
+        rest_points,
+        charging_stations,
+        start_hour
+    );
 
     return 0;
 }

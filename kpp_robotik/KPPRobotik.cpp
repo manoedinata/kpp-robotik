@@ -9,7 +9,10 @@
 #include "KPPRobotik.h"
 
 // Tambah edge ke graph (u -> v, w, o)
-void KPPRobotik::add_edge(const std::string& u, const std::string& v, int w, int o) {
+void KPPRobotik::add_edge(
+    const std::string& u,
+    const std::string& v, int w, int o
+){
     graph.add_edge(u, v, w, o);
 }
 
@@ -36,7 +39,7 @@ void KPPRobotik::get_best_routes(
         State current = pq.top();
         pq.pop();
 
-        // If we've reached the target, print the results and exit
+        // Jika node == T (Target), done. Tugas kita selesai.
         if (current.node == target) {
             std::cout << "Total energi minimum: " << current.energy_used << std::endl;
             std::cout << "Jalur: ";
@@ -52,6 +55,7 @@ void KPPRobotik::get_best_routes(
                     : current.timeline[i])
                 << ")" << std::endl;
             }
+
             return;
         }
 
@@ -64,7 +68,7 @@ void KPPRobotik::get_best_routes(
         visited[state_key] = current.energy_used;
 
         // Charging station
-        // Refill energy
+        // Refill energi ke energi maksimum
         if (charging_stations.count(current.node) && current.energy_left < MAX_ENERGY) {
             State next_state = current;
             next_state.energy_left = MAX_ENERGY;
@@ -72,10 +76,14 @@ void KPPRobotik::get_best_routes(
         }
 
         // Rest point
-        // Tunggu hingga jam genap untuk efisiensi energi
+        // Disini, kita dapat menunggu hingga jam genap
+        // untuk efisiensi energi. Secara waktu, ini sangatlah
+        // boros waktu dan memperlama waktu tempuh node. Namun,
+        // sangat membantu mengurangi penggunaan energi karena
+        // jika genap, maka cost energi *= 0.8
         if (rest_points.count(current.node)) {
             int hour = current.time / 60;
-            if (hour % 2 == 1) { // If the hour is odd
+            if (hour % 2 == 1) {
                 int minutes_to_next_hour = 60 - (current.time % 60);
                 int new_time = current.time + minutes_to_next_hour;
                 
@@ -86,18 +94,31 @@ void KPPRobotik::get_best_routes(
                 pq.push(next_state);
             }
         }
-        
-        // Action: Explore neighbors
+
+        // Explore neighbors menggunakan Dijkstra
+        // Bandingkan cost saat ini dengan yang sudah ada.
+        // Fungsi Priority Queue disini adalah menyimpan states per node
+        // dan otomatis memberikan prioritas berdasarkan cost terendah
+        // (min-heap)
         for (const auto& edge : graph.get_neighbors(current.node)) {
             std::string neighbor = std::get<0>(edge);
             int w = std::get<1>(edge);
             int o = std::get<2>(edge);
 
             int base_cost = w + o;
-            
+
             int hour = current.time / 60;
-            int cost = (hour % 2 == 1) ? static_cast<int>(base_cost * 1.3) : static_cast<int>(base_cost * 0.8);
-            
+
+            // Perhitungan biaya (cost) energi sesuai jam
+            // Ganjil: cost *= 1.3
+            // Genap: cost *= 0.8
+            // Yang mana? Yap, cari yang genap.
+            int cost = (hour % 2 == 1)
+                ? static_cast<int>(base_cost * 1.3)
+                : static_cast<int>(base_cost * 0.8);
+
+            // Jika cost masih cukup dengan sisa energi,
+            // tambahkan ke PQ
             if (cost <= current.energy_left) {
                 int travel_time = std::round(static_cast<double>(w) / SPEED);
                 int new_time = current.time + travel_time;
@@ -117,6 +138,6 @@ void KPPRobotik::get_best_routes(
         }
     }
 
-    // This part is reached if the priority queue becomes empty and the target was not found
+    // Tereksekusi jika robot gagal :(
     std::cout << "Robot gagal dalam mencapai tujuan :(" << std::endl;
 }

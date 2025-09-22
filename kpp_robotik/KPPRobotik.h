@@ -6,6 +6,7 @@
 #include <vector>
 #include <set>
 
+// Struct: State node saat ini (current node)
 struct State {
     int energy_used;
     int time;
@@ -22,6 +23,7 @@ struct State {
     }
 };
 
+// Class object: Main KPPRobotik
 class KPPRobotik {
     private:
         Graph graph;
@@ -32,7 +34,12 @@ class KPPRobotik {
         KPPRobotik() = default;
 
         // Method to add an edge to the internal graph object
-        void add_edge(const std::string& u, const std::string& v, int w, int o);
+        void add_edge(
+            const std::string& u,
+            const std::string& v,
+            int w,
+            int o
+        );
 
         // The main algorithm to find the best route
         void get_best_routes(
