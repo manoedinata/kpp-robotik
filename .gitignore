@@ -1,4 +1,5 @@
 .vscode/
 
 kpp.exe
-kpp_robotik/KPPRobotik.exe
+kpp_robotik/KPPRobotik
+kpp_robotik/*.o

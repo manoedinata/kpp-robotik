@@ -13,7 +13,13 @@ Git repo: https://github.com/manoedinata/kpp-robotik
 
 See the [KPP instruction](https://github.com/manoedinata/kpp-robotik/blob/master/KPP%20Programming%2025.pdf) for more informations regarding the task.
 
-## Compile:
+## Compile
+
+```
+make # or mingw32-make if using MinGW on Windows
+```
+
+Or, compile manually:
 
 ```
 cd kpp_robotik/
