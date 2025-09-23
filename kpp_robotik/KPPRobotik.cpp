@@ -28,10 +28,20 @@ void KPPRobotik::get_best_routes(
     std::priority_queue<State, std::vector<State>, std::greater<State>> pq;
 
     // Simpan visited node
-    std::map<std::pair<std::string, int>, int> visited;
+    std::map<
+        // State
+        std::pair<
+            std::string,
+            int
+        >,
+        // Energy used
+        int
+    > visited;
 
     // Initial state
-    State initial_state = {0, start_hour * 60, start, MAX_ENERGY, {start}, {0}};
+    State initial_state = {
+        0, start_hour * 60, start, MAX_ENERGY, {start}, {0}
+    };
     pq.push(initial_state);
 
     // Loop hingga Priority Queue kosong
@@ -59,7 +69,7 @@ void KPPRobotik::get_best_routes(
             return;
         }
 
-        // Jika node ini sudah visited dan punya energi yang cukup, lanjut
+        // Jika node ini sudah visited dan punya energi yang cukup, skip.
         int time_parity = (current.time / 60) % 2;
         auto state_key = std::make_pair(current.node, time_parity);
         if (visited.count(state_key) && visited[state_key] <= current.energy_used) {
@@ -120,7 +130,12 @@ void KPPRobotik::get_best_routes(
             // Jika cost masih cukup dengan sisa energi,
             // tambahkan ke PQ
             if (cost <= current.energy_left) {
+                // Hitung waktu tempuh
+                // Waktu = Jarak / Kecepatan
+                // SPEED disini adalah statis, yaitu 100 m/h
+                // Ini hanyalah contoh yang mempresentasikan waktu tempuh
                 int travel_time = std::round(static_cast<double>(w) / SPEED);
+
                 int new_time = current.time + travel_time;
 
                 State next_state;
