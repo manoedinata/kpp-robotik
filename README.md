@@ -15,6 +15,8 @@ See the [KPP instruction](https://github.com/manoedinata/kpp-robotik/blob/master
 
 ## Compile
 
+### C++ version
+
 ```
 make # or mingw32-make if using MinGW on Windows
 ./kpp_robotik/KPPRobotik
@@ -26,6 +28,12 @@ Or, compile manually:
 cd kpp_robotik/
 g++ main.cpp Graph.cpp KPPRobotik.cpp -o KPPRobotik -std=c++17
 ./KPPRobotik
+```
+
+### Python version
+
+```
+python3 kpp.py
 ```
 
 ## Input
