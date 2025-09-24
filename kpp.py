@@ -9,7 +9,7 @@
 # waktu (ganjil/genap) dan charging point
 
 MAX_ENERGY = 1000
-SPEED = 100
+SPEED = 100 # 100 m / min
 
 class Graph:
     def __init__(self, n):
