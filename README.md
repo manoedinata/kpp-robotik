@@ -17,6 +17,7 @@ See the [KPP instruction](https://github.com/manoedinata/kpp-robotik/blob/master
 
 ```
 make # or mingw32-make if using MinGW on Windows
+./kpp_robotik/KPPRobotik
 ```
 
 Or, compile manually:
@@ -24,7 +25,7 @@ Or, compile manually:
 ```
 cd kpp_robotik/
 g++ main.cpp Graph.cpp KPPRobotik.cpp -o KPPRobotik -std=c++17
-./kpp_robotik/KPPRobotik
+./KPPRobotik
 ```
 
 ## Input
