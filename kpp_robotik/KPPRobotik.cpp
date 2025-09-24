@@ -124,8 +124,8 @@ void KPPRobotik::get_best_routes(
             // Genap: cost *= 0.8
             // Yang mana? Yap, cari yang genap.
             int cost = (hour % 2 == 1)
-                ? static_cast<int>(base_cost * 1.3)
-                : static_cast<int>(base_cost * 0.8);
+                ? static_cast<double>(base_cost * 1.3)
+                : static_cast<double>(base_cost * 0.8);
 
             // Jika cost masih cukup dengan sisa energi,
             // tambahkan ke PQ

@@ -28,7 +28,7 @@ class KPPRobotik {
     private:
         Graph graph;
         static const int MAX_ENERGY = 1000;
-        static const int SPEED = 100;
+        static const int SPEED = 100; // 100 m / menit (CONTOH)
 
     public:
         KPPRobotik() = default;
