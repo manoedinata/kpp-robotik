@@ -92,9 +92,11 @@ class KPPRobotik:
                 # Jika biaya energi lebih rendah,
                 # tambah ke states
                 if cost <= energy_left:
-                    # TODO: Jelaskan travel_time
-                    print("W: ", w, " SPEED: ", SPEED)
+                    # Waktu = Jarak / Kecepatan
+                    # SPEED disini adalah statis, yaitu 100 m/h
+                    # Ini hanyalah contoh yang mempresentasikan waktu tempuh
                     travel_time = round(w / SPEED)
+
                     new_time = time + travel_time
 
                     self.states.append((
