@@ -55,6 +55,7 @@ class KPPRobotik:
                 print("Jalur:", " -> ".join(path))
                 print("Waktu tiba:")
                 for n, t in zip(path, timeline):
+                    t = t if t < 60 else t - (60 * start_hour)
                     print(f"{n} (menit {t})")
                 return
 
